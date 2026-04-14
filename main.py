@@ -3,58 +3,65 @@ from fastapi import FastAPI
 app = FastAPI()
 
 # =========================
-# 1️⃣ Multi-AI (Dummy)
+# 🧠 PROJECT MEMORY
 # =========================
 
-def openai_ai(prompt):
-    return "🤖 OpenAI (dummy): " + prompt
-
-def anthropic_ai(prompt):
-    return "🧠 Anthropic (dummy): " + prompt
-
+projects = {}
 
 # =========================
-# 2️⃣ AI Router System
+# 📋 CREATE PROJECT
 # =========================
 
-def ai_router(prompt):
-    # Simple logic (future में smart होगा)
-    if len(prompt) < 50:
-        return openai_ai(prompt)
-    else:
-        return anthropic_ai(prompt)
+@app.get("/create_project")
+def create_project(name: str, idea: str):
+    projects[name] = {
+        "idea": idea,
+        "tasks": [],
+        "status": "created"
+    }
+    return {"message": f"Project '{name}' created 🚀"}
 
 
 # =========================
-# 3️⃣ AI Agents (Dummy)
+# 📋 ADD TASK
 # =========================
 
-def coding_agent(task):
-    return "💻 Coding Agent: Working on -> " + task
-
-def research_agent(task):
-    return "📊 Research Agent: Analyzing -> " + task
+@app.get("/add_task")
+def add_task(name: str, task: str):
+    if name in projects:
+        projects[name]["tasks"].append(task)
+        return {"message": f"Task added to {name}"}
+    return {"error": "Project not found"}
 
 
 # =========================
-# ROUTES
+# 🤖 AUTO EXECUTE (Dummy)
 # =========================
 
-@app.get("/")
-def home():
-    return {"message": "AI Ecosystem Backend Running 🚀"}
+@app.get("/run_project")
+def run_project(name: str):
+    if name not in projects:
+        return {"error": "Project not found"}
 
-@app.get("/chat")
-def chat(q: str):
-    response = ai_router(q)
-    return {"response": response}
+    tasks = projects[name]["tasks"]
+    results = []
 
-@app.get("/agent/coding")
-def agent_coding(task: str):
-    result = coding_agent(task)
-    return {"result": result}
+    for t in tasks:
+        results.append(f"✅ Done: {t}")
 
-@app.get("/agent/research")
-def agent_research(task: str):
-    result = research_agent(task)
-    return {"result": result}
+    return {
+        "project": name,
+        "result": results,
+        "status": "completed"
+    }
+
+
+# =========================
+# 📊 VIEW PROJECT
+# =========================
+
+@app.get("/view_project")
+def view_project(name: str):
+    if name in projects:
+        return projects[name]
+    return {"error": "Project not found"}
