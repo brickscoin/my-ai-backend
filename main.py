@@ -3,6 +3,15 @@ from fastapi import FastAPI
 app = FastAPI()
 
 # =========================
+# 🏠 HOME ROUTE
+# =========================
+
+@app.get("/")
+def home():
+    return {"message": "BlackHoleX AI Running 🚀"}
+
+
+# =========================
 # 🧠 PROJECT MEMORY
 # =========================
 
@@ -35,7 +44,7 @@ def add_task(name: str, task: str):
 
 
 # =========================
-# 🤖 AUTO EXECUTE (Dummy)
+# 🤖 RUN PROJECT (AUTO)
 # =========================
 
 @app.get("/run_project")
