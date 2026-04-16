@@ -1,76 +1,38 @@
 from fastapi import FastAPI
+import os
 
 app = FastAPI()
 
-# =========================
-# 🏠 HOME ROUTE
-# =========================
-
+# ======================
+# 🧠 HOME
+# ======================
 @app.get("/")
 def home():
-    return {"message": "BlackHoleX AI Running 🚀"}
+    return {"message": "BlackHoleX AI Brain Running 🚀"}
 
+# ======================
+# 🧠 ROUTER LOGIC
+# ======================
+def ai_router(prompt: str):
+    length = len(prompt)
 
-# =========================
-# 🧠 PROJECT MEMORY
-# =========================
+    # Simple intelligent routing logic
+    if length < 30:
+        return "OpenAI (fast brain selected)"
+    elif length < 100:
+        return "Mistral (balanced brain selected)"
+    else:
+        return "Claude (deep reasoning brain selected)"
 
-projects = {}
-
-# =========================
-# 📋 CREATE PROJECT
-# =========================
-
-@app.get("/create_project")
-def create_project(name: str, idea: str):
-    projects[name] = {
-        "idea": idea,
-        "tasks": [],
-        "status": "created"
-    }
-    return {"message": f"Project '{name}' created 🚀"}
-
-
-# =========================
-# 📋 ADD TASK
-# =========================
-
-@app.get("/add_task")
-def add_task(name: str, task: str):
-    if name in projects:
-        projects[name]["tasks"].append(task)
-        return {"message": f"Task added to {name}"}
-    return {"error": "Project not found"}
-
-
-# =========================
-# 🤖 RUN PROJECT (AUTO)
-# =========================
-
-@app.get("/run_project")
-def run_project(name: str):
-    if name not in projects:
-        return {"error": "Project not found"}
-
-    tasks = projects[name]["tasks"]
-    results = []
-
-    for t in tasks:
-        results.append(f"✅ Done: {t}")
+# ======================
+# 🤖 CHAT ENDPOINT
+# ======================
+@app.get("/chat")
+def chat(q: str):
+    ai_used = ai_router(q)
 
     return {
-        "project": name,
-        "result": results,
-        "status": "completed"
+        "input": q,
+        "selected_ai": ai_used,
+        "response": f"Processed by {ai_used}"
     }
-
-
-# =========================
-# 📊 VIEW PROJECT
-# =========================
-
-@app.get("/view_project")
-def view_project(name: str):
-    if name in projects:
-        return projects[name]
-    return {"error": "Project not found"}
